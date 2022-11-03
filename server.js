@@ -25,9 +25,8 @@ const ssr = async (url) => {
 };
 
 
-const app = express();
-app.get("/render", async (req, res, next) => {
-  const { url } = req.query || {}
+const renderMiddleware = async (req, res, next) => {
+  const { url } = req.query || {};
   try {
     console.log(`[${new Date().toISOString()}] init render ${url}`);
     const { html, ttRenderMs } = await ssr(url);
@@ -42,6 +41,9 @@ app.get("/render", async (req, res, next) => {
     console.log(error);
     return res.status(500).send("something wrong");
   }
-});
+};
+
+const app = express();
+app.use("/", renderMiddleware);
 
 app.listen(8080, () => console.log("Server started. Press Ctrl+C to quit"));
