@@ -3,8 +3,12 @@ const puppeteer = require("puppeteer");
 
 let browser;
 const initBrowser = async () => {
-  console.log(`[${new Date().toISOString()}][SSR] puppeteer.launch`);
-  browser = await puppeteer.launch({ headless: true });
+  try {
+    console.log(`[${new Date().toISOString()}][SSR] puppeteer.launch`);
+    browser = await puppeteer.launch({ headless: true });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 initBrowser();
@@ -45,5 +49,6 @@ const renderMiddleware = async (req, res, next) => {
 
 const app = express();
 app.use("/", renderMiddleware);
+app.disable("x-powered-by");
 
 app.listen(8080, () => console.log("Server started. Press Ctrl+C to quit"));
